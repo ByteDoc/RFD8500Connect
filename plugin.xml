@@ -9,11 +9,7 @@
         <clobbers target="cordova.plugins.RFD8500Connect" />
     </js-module>
     <platform name="ios">
-        <config-file target="config.xml" parent="/*">
-            <feature name="RFD8500Connect">
-                <param name="ios-package" value="RFD8500Connect"/>
-            </feature>
-        </config-file>
+        
         
         <!-- Objective-C plugin API -->
         <header-file src="src/ios/RFD8500Connect.h" target-dir="RFD8500Connect" />
