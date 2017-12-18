@@ -11,8 +11,8 @@
     <platform name="ios">
         
 
-        <framework src=ExternalAccessory.framework” />
-        <framework src=”CoreBluetooth.framework” />
+        <framework src="ExternalAccessory.framework" />
+        <framework src="CoreBluetooth.framework" />
         
         <!-- Objective-C plugin API -->
         <header-file src="src/ios/RFD8500Connect.h" target-dir="RFD8500Connect" />
