@@ -17,44 +17,59 @@
         <!-- Objective-C plugin API -->
         <header-file src="src/ios/RFD8500Connect.h" target-dir="RFD8500Connect" />
         <source-file src="src/ios/RFD8500Connect.m" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/RFD8500RfidEventReceiver.h" target-dir="RFD8500Connect" />
+        <source-file src="src/ios/RFD8500RfidEventReceiver.m" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/RFD8500BtEventReceiver.h" target-dir="RFD8500Connect" />
+        <source-file src="src/ios/RFD8500BtEventReceiver.m" target-dir="RFD8500Connect" />
 
         <!-- Zebra RFD8500 SDK -->
         <!-- Compiled libraries -->
         <source-file src="src/ios/libs/libsymbolrfid-sdk.a" framework="true" />
         <!-- Header files -->
-        <header-file src="src/ios/libs/include/AccessOperationCode.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidAccessConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidAccessCriteria.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidAccessParameters.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidAntennaConfiguration.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidAttribute.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidBatteryEvent.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidDatabaseEvent.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidDynamicPowerConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidLinkProfile.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidOperEndSummaryEvent.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidPowerEvent.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidPreFilter.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidRadioErrorEvent.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidReaderCapabilitiesInfo.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidReaderInfo.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidReaderVersionInfo.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidRegionInfo.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidRegulatoryConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidReportConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidSdkApi.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidSdkApiDelegate.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidSdkDefs.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidSdkFactory.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidSingulationConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidStartTriggerConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidStopTriggerConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidTagData.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidTagFilter.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidTagReportConfig.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidTemperatureEvent.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidUniqueTagsReport.h" target-dir="RFD8500Connect" />
-        <header-file src="src/ios/libs/include/RfidUntraceableConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/AccessOperationCode.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidAccessConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidAccessCriteria.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidAccessParameters.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidAntennaConfiguration.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidAttribute.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidBatteryEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidDatabaseEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidDynamicPowerConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidLinkProfile.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidOperEndSummaryEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidPowerEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidPreFilter.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidRadioErrorEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidReaderCapabilitiesInfo.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidReaderInfo.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidReaderVersionInfo.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidRegionInfo.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidRegulatoryConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidReportConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidSdkApi.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidSdkApiDelegate.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidSdkDefs.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidSdkFactory.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidSingulationConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidStartTriggerConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidStopTriggerConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidTagData.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidTagFilter.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidTagReportConfig.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidTemperatureEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidUniqueTagsReport.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_rfid/RfidUntraceableConfig.h" target-dir="RFD8500Connect" />
+
+        <!-- Compiled libraries -->
+        <source-file src="src/ios/libs/libsymbolbt-sdk.a" framework="true" />
+        <!-- Header files -->
+        <header-file src="src/ios/libs/include_bt/FirmwareUpdateEvent.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_bt/ISbtSdkApi.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_bt/ISbtSdkApiDelegate.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_bt/RMDAttributes.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_bt/SbtScannerInfo.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_bt/SbtSdkDefs.h" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/libs/include_bt/SbtSdkFactory.h" target-dir="RFD8500Connect" />
 
     </platform>
 </plugin>
