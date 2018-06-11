@@ -501,7 +501,7 @@
     
 - (void) cordovaGetSdkVersion:(CDVInvokedUrlCommand *)command {
     
-    [self.commandDelegate runInBackground:^{
+    //[self.commandDelegate runInBackground:^{
         /* variable to store single shared instance of API object */
         //id <srfidISdkApi> apiInstance;
         /* receiving single shared instance of API object */
@@ -546,7 +546,7 @@
         // Execute sendPluginResult on this plugin's commandDelegate, passing in the ...
         // ... instance of CDVPluginResult
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    //}];
     
 }
 
