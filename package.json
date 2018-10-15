@@ -1,0 +1,31 @@
+{
+  "name": "RFD8500Connect",
+  "version": "0.9.2",
+  "description": "RFD8500 Connection Plugin",
+  "cordova": {
+    "id": "RFD8500Connect",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ByteDoc/RFD8500Connect.git"
+  },
+  "keywords": [
+    "cordova",
+    "rfid",
+    "zebra",
+    "rfd8500",
+    "scanner",
+    "barcode",
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "author": "Max Schaufler",
+  "license": "CASTANA Solutions GmbH - All rights reserved",
+  "bugs": {
+    "url": "https://github.com/ByteDoc/RFD8500Connect/issues"
+  },
+  "homepage": "https://github.com/ByteDoc/RFD8500Connect#readme"
+}

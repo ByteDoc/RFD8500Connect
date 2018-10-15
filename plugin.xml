@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="RFD8500Connect" version="0.1.0">
-    <name>RFD8500-Plugin</name>
-    <description>Cordova RFD8500 Plugin</description>
-    <license>All rights reserved</license>
+        id="RFD8500Connect" version="0.9.2">
+    <name>RFD8500Connect</name>
+    <description>RFD8500 Connection Plugin</description>
+    <license>CASTANA Solutions GmbH - All rights reserved</license>
     <keywords>cordova,rfid,zebra,rfd8500,scanner,barcode</keywords>
-    <js-module src="www/RFD8500Connect.js" name="RFD8500Connect">
+    <js-module src="www/js/RFD8500Connect.js" name="RFD8500Connect">
         <clobbers target="cordova.plugins.RFD8500Connect" />
     </js-module>
     <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="RFD8500Connect">
+                <param name="ios-package" value="RFD8500Connect"/>
+            </feature>
+        </config-file>
         
 
         <framework src="ExternalAccessory.framework" />
