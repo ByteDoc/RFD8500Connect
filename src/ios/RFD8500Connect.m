@@ -513,7 +513,7 @@
         NSString *first_version = @"first version string";
         NSDictionary *jsonObj2 = [ [NSDictionary alloc]
                                  initWithObjectsAndKeys :
-                                 first_version, @"sdk_version",
+                                 sdk_version, @"sdk_version",
                                  @"true", @"success",
                                  nil
                                  ];
