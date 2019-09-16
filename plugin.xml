@@ -26,6 +26,10 @@
         <source-file src="src/ios/RFD8500RfidEventReceiver.m" target-dir="RFD8500Connect" />
         <header-file src="src/ios/RFD8500BtEventReceiver.h" target-dir="RFD8500Connect" />
         <source-file src="src/ios/RFD8500BtEventReceiver.m" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/RFD8500ConnectInventory.h" target-dir="RFD8500Connect" />
+        <source-file src="src/ios/RFD8500ConnectInventory.m" target-dir="RFD8500Connect" />
+        <header-file src="src/ios/RFD8500ConnectManager.h" target-dir="RFD8500Connect" />
+        <source-file src="src/ios/RFD8500ConnectManager.m" target-dir="RFD8500Connect" />
 
         <!-- Zebra RFD8500 SDK -->
         <!-- Compiled libraries -->

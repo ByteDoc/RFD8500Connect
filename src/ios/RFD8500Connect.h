@@ -6,15 +6,24 @@
 //
 
 #import <Cordova/CDV.h>
+
 #import "RfidSdkFactory.h"
 #import "SbtSdkFactory.h"
+//#import "RFD8500ConnectInventory.h"
 #import "RFD8500RfidEventReceiver.h"
 #import "RFD8500BtEventReceiver.h"
+#import "RFD8500ConnectManager.h"
 
 #import <CoreBluetooth/CoreBluetooth.h>
 
 @interface RFD8500Connect : CDVPlugin <CBCentralManagerDelegate>
     {
+        
+        RFD8500ConnectManager *managerInstance;
+        
+        CDVInvokedUrlCommand *callbackOnRead;
+        
+        
         // RFID
         id <srfidISdkApi> apiInstance;
         
@@ -42,6 +51,11 @@
 
     }
 
+    - (void) cordova_v2_startInventory:(CDVInvokedUrlCommand *) command;
+    - (void) cordova_v2_registerCbOnRead:(CDVInvokedUrlCommand *) command;
+    - (void) sendReaderInfoToCallback:(CDVInvokedUrlCommand *) command : (srfidReaderInfo *) reader;
+
+    - (void) sendErrorMessageToCallback:(CDVInvokedUrlCommand *) command : (NSString *) errorMessage;
 
 
     - (void) cordovaSetGeneralCallbackCommand:(CDVInvokedUrlCommand *)command;
@@ -49,8 +63,10 @@
     - (void) cordovaInitEventReceiver:(CDVInvokedUrlCommand *)command;
     - (void) cordovaReaderInfo:(CDVInvokedUrlCommand *)command;
     - (void) cordovaListReaders:(CDVInvokedUrlCommand *)command;
+
     - (void) cordovaEstablishCommSession:(CDVInvokedUrlCommand *)command;
     - (void) cordovaTerminateCommSession:(CDVInvokedUrlCommand *)command;
+
 
     - (void) cordovaStartInventory:(CDVInvokedUrlCommand *)command;
     - (void) cordovaStopInventory:(CDVInvokedUrlCommand *)command;
@@ -66,6 +82,7 @@
 
     - (void) initEventReceiver;
     - (void) establishCommunicationSession;
+    - (void) establishAsciiConnection:(NSDictionary *) jsonObj;
     - (void) terminateCommunicationSession;
     - (void) startInventory;
 

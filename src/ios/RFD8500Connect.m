@@ -6,8 +6,108 @@
 //
 
 #import "RFD8500Connect.h"
+#import "RFD8500ConnectInventory.h"
 
 @implementation RFD8500Connect
+#define NSStringFromBOOL(aBOOL)    ((aBOOL) ? @"true" : @"false")
+
+- (void) cordova_v2_startInventory:(CDVInvokedUrlCommand *) command {
+    [self.commandDelegate runInBackground:^{
+        
+        NSLog(@">>> starting Inventory ..........");
+        
+        [self initEventReceiver];
+        [self createManager];
+
+        activeReader = [managerInstance getFirstActiveReader];
+        
+        if (activeReader == nil) {
+            [self sendErrorMessageToCallback:command : [managerInstance getLastErrorMessage] ];
+            return;
+        }
+        
+        NSString *result = [RFD8500ConnectInventory startInventory:activeReader];
+        
+        if (result == SRFID_RESULT_SUCCESS) {
+            // Inventory STARTED
+            // pass the active reader to the callback
+            [self sendReaderInfoToCallback:command :activeReader];
+        } else {
+            [self sendErrorMessageToCallback:command : result ];
+            return;
+        }
+        
+    }];
+}
+
+- (void) cordova_v2_registerCbOnRead:(CDVInvokedUrlCommand *)command {
+    if (commandOnReadNotify == nil) {
+        commandOnReadNotify = command;
+        NSLog(@"commandOnReadNotify was set");
+    }
+}
+
+- (void) sendErrorMessageToCallback:(CDVInvokedUrlCommand *)command :(NSString *)errorMessage {
+    if (command == nil) {
+        NSLog(@"cordova callback command NOT SET, no result will be sent");
+        return;
+    }
+    CDVPluginResult *pluginResult = [ CDVPluginResult
+                                     resultWithStatus    : CDVCommandStatus_ERROR
+                                     messageAsString: errorMessage
+                                     ];
+    [pluginResult setKeepCallbackAsBool:NO];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) sendReaderInfoToCallback:(CDVInvokedUrlCommand *)command :(srfidReaderInfo *)reader {
+    NSDictionary *dictReader = [ [NSDictionary alloc]
+                                      initWithObjectsAndKeys :
+                                      @([reader getReaderID]).stringValue , @"readerId",
+                                      NSStringFromBOOL([reader isActive]), @"active",
+                                      [reader getReaderName], @"readerName",
+                                      nil
+                                      ];
+    
+    // https://stackoverflow.com/questions/6368867/generate-json-string-from-nsdictionary-in-ios/9020923#9020923
+    NSError *error;
+    NSData *jsonDataReader = [NSJSONSerialization dataWithJSONObject:dictReader
+                                                                   options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                                     error:&error];
+    NSString *jsonStringReader;
+    if (! jsonDataReader) {
+        NSLog(@"JSON error: %@", error);
+    } else {
+        jsonStringReader = [[NSString alloc] initWithData:jsonDataReader encoding:NSUTF8StringEncoding];
+    }
+    
+    NSDictionary *jsonObj = [ [NSDictionary alloc]
+                             initWithObjectsAndKeys :
+                             jsonStringReader, @"reader",
+                             nil
+                             ];
+    
+    if (command == nil) {
+        NSLog(@"cordova callback command NOT SET, no result will be sent");
+        return;
+    }
+    CDVPluginResult *pluginResult = [ CDVPluginResult
+                                     resultWithStatus    : CDVCommandStatus_OK
+                                     messageAsDictionary : jsonObj
+                                     ];
+    // [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
+    
+    [pluginResult setKeepCallbackAsBool:NO];    // not needed here, startInventory should always be triggered by user manually
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) createManager {
+    
+    if (managerInstance == nil) {
+        managerInstance = [[RFD8500ConnectManager alloc] initWithPlugin:self pluginEventReceiver:eventListener];
+    }
+}
+
 
 - (void) cordovaSetGeneralCallbackCommand:(CDVInvokedUrlCommand *)command {
     [self setCommandForGeneralCallback:command];
@@ -35,6 +135,56 @@
 }
 
 
+
+
+- (void) initEventReceiver {
+    
+    NSLog(@"===== initEventReceiver STARTED ... =====");
+    
+    // ######################
+    /* receiving single shared instance of API object */
+    apiInstance = [srfidSdkFactory createRfidSdkApiInstance];
+    NSString *sdk_version = [apiInstance srfidGetSdkVersion]; NSLog(@"Zebra SDK version: %@\n", sdk_version);
+    
+    
+    if (eventListener == nil) {
+        /* registration of callback interface with SDK */
+        eventListener = [[RFD8500RfidEventReceiver alloc] init];
+        [apiInstance srfidSetDelegate:eventListener];
+        
+        /* subscribe for tag data and operation status related events */
+        [apiInstance srfidSubsribeForEvents:(
+                                             SRFID_EVENT_MASK_READ | SRFID_EVENT_MASK_STATUS |
+                                             SRFID_EVENT_MASK_BATTERY | SRFID_EVENT_MASK_TRIGGER |
+                                             SRFID_EVENT_READER_APPEARANCE | SRFID_EVENT_READER_DISAPPEARANCE |
+                                             SRFID_EVENT_SESSION_ESTABLISHMENT | SRFID_EVENT_SESSION_TERMINATION)];
+        
+        
+        /* subscribe for battery and handheld trigger related events */
+        //[apiInstance srfidSubsribeForEvents:(SRFID_EVENT_MASK_BATTERY | SRFID_EVENT_MASK_TRIGGER)];
+        /* subscribe for connectivity related events */
+        //[apiInstance srfidSubsribeForEvents:(SRFID_EVENT_READER_APPEARANCE | SRFID_EVENT_READER_DISAPPEARANCE)];
+        
+        
+        
+        /* configuring SDK to communicate with RFID readers in BT MFi mode */
+        [apiInstance srfidSetOperationalMode:SRFID_OPMODE_MFI];
+        /* configuring SDK to detect appearance and disappearance of available RFID readers */
+        [apiInstance srfidEnableAvailableReadersDetection:YES];
+        
+        
+        eventListener.pluginConnect = self;
+        
+        NSLog(@"eventListener was created !");
+        
+    } else {
+        NSLog(@"eventListener already starting, omitting another start ...");
+    }
+    
+}
+
+
+
 //- (void)myPluginMethod:(CDVInvokedUrlCommand*)command
 //{
 //    // Check command.arguments here.
@@ -49,6 +199,8 @@
 
 // use the supplied arguments
 // NSString* myarg = [command.arguments objectAtIndex:0];
+
+
 
 
 - (void) cordovaRegisterReaderConnect:(CDVInvokedUrlCommand *)command {
@@ -125,48 +277,6 @@
 
 
 
-- (void) initEventReceiver {
-    
-    NSLog(@"===== initEventReceiver STARTED ... =====");
-    
-    // ######################
-    /* receiving single shared instance of API object */
-    apiInstance = [srfidSdkFactory createRfidSdkApiInstance];
-    NSString *sdk_version = [apiInstance srfidGetSdkVersion]; NSLog(@"Zebra SDK version: %@\n", sdk_version);
-    
-    
-    if (eventListener == nil) {
-        /* registration of callback interface with SDK */
-        eventListener = [[RFD8500RfidEventReceiver alloc] init];
-        [apiInstance srfidSetDelegate:eventListener];
-        
-        /* subscribe for tag data and operation status related events */
-        [apiInstance srfidSubsribeForEvents:(SRFID_EVENT_MASK_READ | SRFID_EVENT_MASK_STATUS | SRFID_EVENT_MASK_BATTERY | SRFID_EVENT_MASK_TRIGGER | SRFID_EVENT_READER_APPEARANCE | SRFID_EVENT_READER_DISAPPEARANCE)];
-        /* subscribe for battery and handheld trigger related events */
-        //[apiInstance srfidSubsribeForEvents:(SRFID_EVENT_MASK_BATTERY | SRFID_EVENT_MASK_TRIGGER)];
-        /* subscribe for connectivity related events */
-        //[apiInstance srfidSubsribeForEvents:(SRFID_EVENT_READER_APPEARANCE | SRFID_EVENT_READER_DISAPPEARANCE)];
-        
-        
-        
-        /* configuring SDK to communicate with RFID readers in BT MFi mode */
-        [apiInstance srfidSetOperationalMode:SRFID_OPMODE_MFI];
-        /* configuring SDK to detect appearance and disappearance of available RFID readers */
-        [apiInstance srfidEnableAvailableReadersDetection:NO];
-        
-        
-        eventListener.pluginConnect = self;
-        
-        NSLog(@"eventListener was created !");
-    
-    } else {
-        NSLog(@"eventListener already starting, omitting another start ...");
-    }
-    
-}
-
-
-
 - (void) terminateCommunicationSession {
     /* allocate an array for storage of list of active RFID readers */
     NSMutableArray *active_readers = [[NSMutableArray alloc] init];
@@ -189,17 +299,13 @@
 - (void) establishCommunicationSession {
     NSLog(@"================= trying to establish connection ===============");
     /* enable automatic communication session reestablishment */
-    [apiInstance srfidEnableAutomaticSessionReestablishment:YES];
-    
-    /* subscribe for connectivity related events */
-    [apiInstance srfidSubsribeForEvents:(SRFID_EVENT_SESSION_ESTABLISHMENT | SRFID_EVENT_SESSION_TERMINATION)];
-    
+    [apiInstance srfidEnableAutomaticSessionReestablishment:NO];
     
     /* allocate an array for storage of list of available RFID readers */
     NSMutableArray *available_readers = [[NSMutableArray alloc] init];
     /* retrieve a list of available readers */
-    [apiInstance srfidGetAvailableReadersList:&available_readers];  // calling this only once (first time) will NOT list the reader!
-    [apiInstance srfidGetAvailableReadersList:&available_readers];  // call twice, doesn't hurst, finds the reader reliably
+    //[apiInstance srfidGetAvailableReadersList:&available_readers];  // calling this only once (first time) will NOT list the reader!
+    [apiInstance srfidGetAvailableReadersList:&available_readers];  // call twice, doesn't hurt, finds the reader reliably
     if (0 < [available_readers count]) {
         /* at least one available RFID reader exists */
         activeReader = (srfidReaderInfo*)[available_readers objectAtIndex:0];
@@ -209,7 +315,26 @@
     } else {
         NSLog(@">>>>> NO READER AVAILABLE");
     }
+    
     [available_readers removeAllObjects];
+    
+}
+
+- (void) establishAsciiConnection: (NSDictionary *) jsonObj {
+    //establish an ASCII protocol level connection
+    NSString *password = @""; //@"ascii password";
+    SRFID_RESULT result = [apiInstance srfidEstablishAsciiConnection:[activeReader getReaderID] aPassword:password];
+    if (SRFID_RESULT_SUCCESS == result) {
+        NSLog(@"ASCII connection has been established\n");
+        [self cpr_onReaderConnect:jsonObj];
+    }
+    else if (SRFID_RESULT_WRONG_ASCII_PASSWORD == result) {
+        NSLog(@"Incorrect ASCII connection password\n");
+    }
+    else {
+        NSLog(@"Failed to establish ASCII connection\n");
+    }
+    
     
 }
 
@@ -232,7 +357,8 @@
     
     [apiInstance srfidStopInventory:activeReaderId aStatusMessage:nil];
     
-    /* establish an ASCII protocol level connection */
+    /*
+    //establish an ASCII protocol level connection
     NSString *password = @""; //@"ascii password";
     SRFID_RESULT result = [apiInstance srfidEstablishAsciiConnection:[activeReader getReaderID] aPassword:password];
     if (SRFID_RESULT_SUCCESS == result) {
@@ -242,14 +368,16 @@
     else {
         NSLog(@"Failed to establish ASCII connection\n");
     }
+    */
     
-    [apiInstance srfidEnableAutomaticSessionReestablishment:YES];
+    [apiInstance srfidEnableAutomaticSessionReestablishment:NO];
     
     
     /* subscribe for tag data related events */
-    [apiInstance srfidSubsribeForEvents:SRFID_EVENT_MASK_READ];
+//    [apiInstance srfidSubsribeForEvents:SRFID_EVENT_MASK_READ];
     /* subscribe for operation start/stop related events */
-    [apiInstance srfidSubsribeForEvents:SRFID_EVENT_MASK_STATUS];
+//    [apiInstance srfidSubsribeForEvents:SRFID_EVENT_MASK_STATUS];
+    
     /* identifier of one of active RFID readers is supposed to be stored in activeReaderId variable */
     /* allocate object for start trigger settings */
     srfidStartTriggerConfig *start_trigger_cfg = [[srfidStartTriggerConfig alloc] init];
@@ -443,10 +571,12 @@
         NSMutableArray *available_readers = [[NSMutableArray alloc] init];
         /* allocate an array for storage of list of active RFID readers */
         NSMutableArray *active_readers = [[NSMutableArray alloc] init];
+        
         /* retrieve a list of available readers */
         [apiInstance srfidGetAvailableReadersList:&available_readers];
         /* retrieve a list of active readers */
         [apiInstance srfidGetActiveReadersList:&active_readers];
+        
         /* merge active and available readers to a single list */
         NSMutableArray *readers = [[NSMutableArray alloc] init];
         [readers addObjectsFromArray:active_readers];
@@ -471,7 +601,7 @@
                                          resultWithStatus    : CDVCommandStatus_OK
                                          messageAsDictionary : jsonObj
                                          ];
-        [pluginResult setKeepCallbackAsBool:FALSE];
+        [pluginResult setKeepCallbackAsBool:TRUE];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:commandForGeneralCallback.callbackId];
     }];
     

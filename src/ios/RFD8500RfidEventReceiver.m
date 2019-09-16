@@ -41,10 +41,16 @@
                              @YES, @"connected",
                              nil
                              ];
-    [self.pluginConnect cpr_onReaderConnect:jsonObj];
+    
     /* print the information about RFID reader represented by srfidReaderInfo object */
     NSLog(@"RFID reader has connected: ID = %d name = %@\n", [activeReader getReaderID], [activeReader getReaderName]);
     
+    
+    // call ASCII connection establishing
+    [self.pluginConnect establishAsciiConnection:jsonObj];
+//    [self.pluginConnect cpr_onReaderConnect:jsonObj];
+    
+
 }
 - (void)srfidEventCommunicationSessionTerminated:(int)readerID {
     NSLog(@"==> CommSessionTerminated");
@@ -94,6 +100,15 @@
             case SRFID_MEMORYBANK_RESV:
                 str_bank = @"RESV";
                 break;
+            case SRFID_MEMORYBANK_NONE:
+                str_bank = @"NONE";
+                break;
+            case SRFID_MEMORYBANK_ACCESS:
+                str_bank = @"ACCESS";
+                break;
+            case SRFID_MEMORYBANK_KILL:
+                str_bank = @"KILL";
+                break;
         }
         NSLog(@"%@ memory bank data: %@\n", str_bank, [tagData getMemoryBankData]);
     }
@@ -114,8 +129,10 @@
                              ];
     [self.pluginConnect cpr_onReadNotify:jsonObj];
 
-    NSString *eventString = [NSString stringWithFormat:@"ReadNotify, TagId: %@, Memory bank: %@, Data: %@", [tagData getTagId], str_bank, [tagData getMemoryBankData]];
-    [self.pluginConnect generalEventCallback:eventString];
+//    NSString *eventString = [NSString stringWithFormat:@"ReadNotify, TagId: %@, Memory bank: %@, Data: %@", [tagData getTagId], str_bank, [tagData getMemoryBankData]];
+    
+    
+//    [self.pluginConnect generalEventCallback:eventString];
 }
 
 
@@ -161,5 +178,5 @@
 }
     
 
-    
+
     @end
