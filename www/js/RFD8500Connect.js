@@ -1,3 +1,4 @@
+cordova.define("RFD8500Connect.RFD8500Connect", function(require, exports, module) {
 /*global cordova, module*/
 
 var RFD8500Connect = (function() {
@@ -151,6 +152,17 @@ var RFD8500Connect = (function() {
     }
 
 
+    function v2_startInventory(args, successCallback, errorCallback) {
+        var argsArray = getArgsArray(args);
+        cordova.exec(successCallback, errorCallback, CORDOVA_PLUGIN_NAME, "cordova_v2_startInventory", argsArray);
+    }
+
+    function v2_registerCbOnRead(args, successCallback, errorCallback) {
+        var argsArray = getArgsArray(args);
+        cordova.exec(successCallback, errorCallback, CORDOVA_PLUGIN_NAME, "cordova_v2_registerCbOnRead", argsArray);
+    }
+
+
 
 
     function getArgsArray(args) {
@@ -160,6 +172,10 @@ var RFD8500Connect = (function() {
         return [args];
     }
     return {
+        v2_startInventory: v2_startInventory,
+        v2_registerCbOnRead: v2_registerCbOnRead,
+
+
         getSdkVersion: getSdkVersion,
         initEventReceiver: initEventReceiver,
         readerInfo: readerInfo,
@@ -184,6 +200,11 @@ var RFD8500Connect = (function() {
 }());
 
 module.exports = {
+
+    v2_startInventory: RFD8500Connect.v2_startInventory,
+    v2_registerCbOnRead: RFD8500Connect.v2_registerCbOnRead,
+
+
     getSdkVersion: RFD8500Connect.getSdkVersion,
     initEventReceiver: RFD8500Connect.initEventReceiver,
     readerInfo: RFD8500Connect.readerInfo,
@@ -203,3 +224,5 @@ module.exports = {
 
     setModeBarcode: RFD8500Connect.setModeBarcode
 };
+
+});

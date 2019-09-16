@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="RFD8500Connect" version="0.9.3">
+        id="RFD8500Connect" version="0.9.4">
     <name>RFD8500Connect</name>
     <description>RFD8500 Connection Plugin</description>
     <license>CASTANA Solutions GmbH - All rights reserved</license>
