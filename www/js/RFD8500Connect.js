@@ -1,6 +1,3 @@
-cordova.define("RFD8500Connect.RFD8500Connect", function(require, exports, module) {
-/*global cordova, module*/
-
 var RFD8500Connect = (function() {
 
     var CORDOVA_PLUGIN_NAME = "RFD8500Connect";
@@ -224,5 +221,3 @@ module.exports = {
 
     setModeBarcode: RFD8500Connect.setModeBarcode
 };
-
-});
