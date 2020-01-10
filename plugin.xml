@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="RFD8500Connect" version="0.9.4">
+        id="RFD8500Connect" version="0.9.5">
     <name>RFD8500Connect</name>
     <description>RFD8500 Connection Plugin</description>
     <license>CASTANA Solutions GmbH - All rights reserved</license>
@@ -14,11 +14,11 @@
                 <param name="ios-package" value="RFD8500Connect"/>
             </feature>
         </config-file>
-        
+
 
         <framework src="ExternalAccessory.framework" />
         <framework src="CoreBluetooth.framework" />
-        
+
         <!-- Objective-C plugin API -->
         <header-file src="src/ios/RFD8500Connect.h" target-dir="RFD8500Connect" />
         <source-file src="src/ios/RFD8500Connect.m" target-dir="RFD8500Connect" />
