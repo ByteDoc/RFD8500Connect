@@ -17,16 +17,77 @@
 {
     id <srfidISdkApi> apiInstance;
     apiInstance = [srfidSdkFactory createRfidSdkApiInstance];
-    
+
     NSString *errorMessage ;
-    
-    
+
+
     int activeReaderId = [activeReader getReaderID];
-    
+
+    // START set region configuration
+        SRFID_RESULT r_result;
+        NSString *r_error_response = nil;
+        NSString *region_code = @"DEU";
+        NSMutableArray *enabled_channels = [[NSMutableArray alloc] init];
+        SRFID_HOPPINGCONFIG hopping_on = SRFID_HOPPINGCONFIG_DISABLED;
+        srfidRegulatoryConfig *regulatory_cfg = [[srfidRegulatoryConfig alloc] init];
+
+    /* allocate object for storage of supported channels information */
+     NSMutableArray *supported_channels = [[NSMutableArray alloc] init];
+     BOOL hopping_configurable = NO;
+
+     /* retrieve detailed information about region specified by region code */
+    r_result = [apiInstance srfidGetRegionInfo:activeReaderId aRegionCode:region_code
+       aSupportedChannels:&supported_channels aHoppingConfigurable:&hopping_configurable
+       aStatusMessage:&r_error_response];
+
+       if (SRFID_RESULT_SUCCESS == r_result) {
+     /* region information received */
+
+     if (YES == hopping_configurable) {
+     /* region supports hopping */
+     /* enable first and last channels from the set of supported channels */
+     [enabled_channels addObject:[supported_channels firstObject]];
+     [enabled_channels addObject:[supported_channels lastObject]];
+     /* enable hopping */
+     hopping_on = SRFID_HOPPINGCONFIG_ENABLED;
+       }
+     else {
+     /* region does not support hopping */
+     /* request to not configure hopping */
+     hopping_on = SRFID_HOPPINGCONFIG_DEFAULT;
+       }
+       }
+
+       //[supported_channels release];
+       r_error_response = nil;
+
+       /* configure regulatory parameters to be set */
+       regulatory_cfg = [[srfidRegulatoryConfig alloc] init];
+       [regulatory_cfg setRegionCode:region_code];
+       [regulatory_cfg setEnabledChannelsList:enabled_channels];
+       [regulatory_cfg setHoppingConfig:hopping_on];
+
+       /* set regulatory parameters */
+       r_result = [apiInstance srfidSetRegulatoryConfig:activeReaderId
+       aRegulatoryConfig:regulatory_cfg aStatusMessage:&r_error_response];
+       if (SRFID_RESULT_SUCCESS == r_result) {
+     /* regulatory configuration applied */
+     NSLog(@"Tag report configuration has been set\n");
+       }
+       else if (SRFID_RESULT_RESPONSE_ERROR == r_result) {
+     NSLog(@"Error response from RFID reader: %@\n", r_error_response);
+       }
+       else {
+     NSLog(@"Failed to set regulatory parameters\n");
+       }
+       //[enabled_channels release];
+       //[regulatory_cfg release];
+        // END set region configuration
+
     [apiInstance srfidStopInventory:activeReaderId aStatusMessage:nil];
-    
+
     [apiInstance srfidEnableAutomaticSessionReestablishment:NO];
-    
+
     /* allocate object for start trigger settings */
     srfidStartTriggerConfig *start_trigger_cfg = [[srfidStartTriggerConfig alloc] init];
     /* allocate object for stop trigger settings */
@@ -35,9 +96,9 @@
     srfidReportConfig *report_cfg = [[srfidReportConfig alloc] init];
     /* allocate object for access parameters of inventory operation */
     srfidAccessConfig *access_cfg = [[srfidAccessConfig alloc] init];
-    
+
     srfidDynamicPowerConfig *dynamic_power_cfg = [[srfidDynamicPowerConfig alloc] init];
-    
+
     /* an object for storage of error response received from RFID reader */
     NSString *error_response = nil;
     do {
@@ -56,7 +117,7 @@
         [stop_trigger_cfg setStopOnAccessCount:NO];
         /* configure dynamic power config, to avoid "Command Not Allowed if Dynamic Power is Enabled" */
         [dynamic_power_cfg setDynamicPowerOptimizationEnabled:FALSE];
-        
+
         /* set start trigger parameters */
         SRFID_RESULT result = [apiInstance
                                srfidSetStartTriggerConfiguration:activeReaderId
@@ -91,7 +152,7 @@
             errorMessage = [NSString stringWithFormat:@"Failed to set dynamic power configuration: %@", srfidResultString(result)];
             break;
         }
-        
+
         /* start and stop triggers have been configured */
         error_response = nil;
         /* configure report parameters to report RSSI and Channel Index fields */
@@ -130,14 +191,14 @@
     //[stop_trigger_cfg release];
     //[access_cfg release];
     //[report_cfg release];
-    
+
     if( errorMessage != nil ) {
         NSLog(@"%@\n", errorMessage);
         return errorMessage;
     } else {
         return SRFID_RESULT_SUCCESS;
     }
-    
+
 }
 
 @end
